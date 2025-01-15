@@ -1,7 +1,6 @@
-import { useState } from "react";
-import "./Header.css";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
+import "./Header.css";
 import conf from "../../../configuration";
 
 export default function Header() {
@@ -11,38 +10,30 @@ export default function Header() {
     const database = getDatabase(conf);
     const quotesRef = ref(database, "quotes");
 
-    const fetchData = () => {
-      onValue(quotesRef, (snapshot) => {
-        const dataItem = snapshot.val();
-        if (dataItem) {
-          const quoteItem = Object.values(dataItem);
-          setQuote(quoteItem[Math.floor(Math.random() * quoteItem.length)]);
-        }
-      });
-    };
-
-    fetchData();
+    onValue(quotesRef, (snapshot) => {
+      const dataItem = snapshot.val();
+      if (dataItem) {
+        const quoteItem = Object.values(dataItem);
+        setQuote(quoteItem[Math.floor(Math.random() * quoteItem.length)]);
+      }
+    });
   }, []);
 
   const handleRefreshQuote = () => {
     const database = getDatabase(conf);
     const quotesRef = ref(database, "quotes");
 
-    const fetchData = () => {
-      onValue(quotesRef, (snapshot) => {
-        const dataItem = snapshot.val();
-        if (dataItem) {
-          const quoteItem = Object.values(dataItem);
-          let newQuote = quote;
-          while (quote === newQuote) {
-            newQuote = quoteItem[Math.floor(Math.random() * quoteItem.length)];
-            setQuote(newQuote);
-          }
+    onValue(quotesRef, (snapshot) => {
+      const dataItem = snapshot.val();
+      if (dataItem) {
+        const quoteItem = Object.values(dataItem);
+        let newQuote = quote;
+        while (quote === newQuote) {
+          newQuote = quoteItem[Math.floor(Math.random() * quoteItem.length)];
+          setQuote(newQuote);
         }
-      });
-    };
-
-    fetchData();
+      }
+    });
   };
 
   return (
