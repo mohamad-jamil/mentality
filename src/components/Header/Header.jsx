@@ -24,6 +24,27 @@ export default function Header() {
     fetchData();
   }, []);
 
+  const handleRefreshQuote = () => {
+    const database = getDatabase(conf);
+    const quotesRef = ref(database, "quotes");
+
+    const fetchData = () => {
+      onValue(quotesRef, (snapshot) => {
+        const dataItem = snapshot.val();
+        if (dataItem) {
+          const quoteItem = Object.values(dataItem);
+          let newQuote = quote;
+          while (quote === newQuote) {
+            newQuote = quoteItem[Math.floor(Math.random() * quoteItem.length)];
+            setQuote(newQuote);
+          }
+        }
+      });
+    };
+
+    fetchData();
+  };
+
   return (
     <header className="bg-sky-200 p-4 flex justify-between">
       <div className="text-sky-950 font-serif text-3xl font-black px-2">
@@ -31,7 +52,7 @@ export default function Header() {
       </div>
       <div className="flex gap-4 items-center justify-center">
         <div className="font-serif font-black text-2xl">"{quote}"</div>
-        <button>
+        <button onClick={handleRefreshQuote}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
